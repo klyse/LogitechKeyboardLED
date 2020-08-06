@@ -3,7 +3,8 @@ package main
 import "C"
 import (
 	"fmt"
-	"github.com/klyse/LogitechKeyboardLED/Keyboard"
+	"github.com/klyse/LogitechKeyboardLED/LogiKeyboard"
+	"github.com/klyse/LogitechKeyboardLED/LogiKeyboardTypes"
 	"github.com/moutend/go-hook/pkg/keyboard"
 	"github.com/moutend/go-hook/pkg/types"
 	"log"
@@ -21,21 +22,20 @@ func main() {
 	log.SetFlags(0)
 	log.SetPrefix("error: ")
 
-	var device = 0b111
-	k := Keyboard.Create()
+	k := LogiKeyboard.Create()
 
 	defer k.Shutdown()
 
 	k.Init()
 
-	k.SetTargetDevice(device)
+	k.SetTargetDevice(LogiKeyboardTypes.LogiDeviceTypeAll)
 
 	if err := run(k); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func run(ka *Keyboard.Keyboard) error {
+func run(ka *LogiKeyboard.LogiKeyboard) error {
 	// Buffer size is depends on your need. The 100 is placeholder value.
 	keyboardChan := make(chan types.KeyboardEvent, 100)
 
@@ -65,7 +65,7 @@ func run(ka *Keyboard.Keyboard) error {
 			case types.VK_LWIN:
 				fallthrough
 			case types.VK_RWIN:
-				ka.SetLightning(rand.Intn(100), rand.Intn(100), rand.Intn(100))
+				ka.SetLightingForKeyWithKeyName(LogiKeyboardTypes.L, rand.Intn(100), rand.Intn(100), rand.Intn(100))
 			}
 
 			continue
