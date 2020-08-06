@@ -14,10 +14,6 @@ import (
 	"time"
 )
 
-func call() {
-
-}
-
 func main() {
 	log.SetFlags(0)
 	log.SetPrefix("error: ")
@@ -63,9 +59,16 @@ func run(ka *LogiKeyboard.LogiKeyboard) error {
 
 			switch key := k.VKCode; key {
 			case types.VK_LWIN:
-				fallthrough
-			case types.VK_RWIN:
-				ka.SetLightingForKeyWithKeyName(LogiKeyboardTypes.L, rand.Intn(100), rand.Intn(100), rand.Intn(100))
+
+				var red = rand.Intn(100)
+				var green = rand.Intn(100)
+				var blue = rand.Intn(100)
+				for x := LogiKeyboardTypes.ESC; x < LogiKeyboardTypes.END; x++ {
+					red = (red + 1) % 100
+					green = (green + 1) % 100
+					blue = (blue + 1) % 100
+					ka.SetLightingForKeyWithKeyName(x, red, green, blue)
+				}
 			}
 
 			continue
