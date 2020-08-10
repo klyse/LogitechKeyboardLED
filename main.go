@@ -8,30 +8,44 @@ import (
 	"github.com/moutend/go-hook/pkg/keyboard"
 	"github.com/moutend/go-hook/pkg/types"
 	"log"
-	"math/rand"
 	"os"
 	"os/signal"
 	"time"
 )
 
+var logiKeyboard *LogiKeyboard.LogiKeyboard
+
 func main() {
 	log.SetFlags(0)
 	log.SetPrefix("error: ")
 
-	k := LogiKeyboard.Create()
+	logiKeyboard = LogiKeyboard.Create()
 
-	defer k.Shutdown()
+	defer logiKeyboard.Shutdown()
 
-	k.Init()
+	logiKeyboard.Init()
 
-	k.SetTargetDevice(LogiKeyboardTypes.LogiDeviceTypeAll)
+	logiKeyboard.SetTargetDevice(LogiKeyboardTypes.LogiDeviceTypeAll)
+	defaultLightning()
 
-	if err := run(k); err != nil {
+	var shortcuts = []*Shortcut{
+		new(Shortcut).Create([]types.VKCode{types.VK_LCONTROL, types.VK_LSHIFT}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.T, LogiKeyboardTypes.R}),
+		new(Shortcut).Create([]types.VKCode{types.VK_LWIN}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.ONE, LogiKeyboardTypes.TWO, LogiKeyboardTypes.THREE}),
+		new(Shortcut).Create([]types.VKCode{types.VK_LCONTROL}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.C, LogiKeyboardTypes.Z, LogiKeyboardTypes.Y}),
+		new(Shortcut).Create([]types.VKCode{types.VK_LSHIFT}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.F6}),
+	}
+
+	if err := run(shortcuts); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func run(ka *LogiKeyboard.LogiKeyboard) error {
+func defaultLightning() {
+	fmt.Print("defaultLighting")
+	logiKeyboard.SetLightning(100, 100, 100)
+}
+
+func run(shortcuts []*Shortcut) error {
 	// Buffer size is depends on your need. The 100 is placeholder value.
 	keyboardChan := make(chan types.KeyboardEvent, 100)
 
@@ -46,6 +60,8 @@ func run(ka *LogiKeyboard.LogiKeyboard) error {
 
 	fmt.Println("start capturing keyboard input")
 
+	keyMap := make(map[types.VKCode]bool)
+
 	for {
 		select {
 		case <-time.After(5 * time.Minute):
@@ -57,21 +73,40 @@ func run(ka *LogiKeyboard.LogiKeyboard) error {
 		case k := <-keyboardChan:
 			fmt.Printf("Received %v %v\n", k.Message, k.VKCode)
 
-			switch key := k.VKCode; key {
-			case types.VK_LWIN:
+			keyMap[k.VKCode] = k.Message == types.WM_KEYDOWN
+			fmt.Printf("Value of ctrl %v\n", keyMap[types.VK_LCONTROL])
 
-				var red = rand.Intn(100)
-				var green = rand.Intn(100)
-				var blue = rand.Intn(100)
-				for x := LogiKeyboardTypes.ESC; x < LogiKeyboardTypes.END; x++ {
-					red = (red + 1) % 100
-					green = (green + 1) % 100
-					blue = (blue + 1) % 100
-					ka.SetLightingForKeyWithKeyName(x, red, green, blue)
+			for _, shortcut := range shortcuts {
+				found := true
+				for _, key := range shortcut.modifiers {
+					if !keyMap[key] {
+						found = false
+						break
+					}
+				}
+
+				if found {
+					defaultLightning()
+					for _, logiKey := range shortcut.keys {
+						logiKeyboard.SetLightingForKeyWithKeyName(logiKey, 100, 0, 0)
+					}
+					break
 				}
 			}
 
-			continue
+			if k.Message == types.WM_KEYUP &&
+				(k.VKCode == types.VK_LWIN ||
+					k.VKCode == types.VK_RWIN ||
+					k.VKCode == types.VK_RCONTROL ||
+					k.VKCode == types.VK_LCONTROL ||
+					k.VKCode == types.VK_LSHIFT ||
+					k.VKCode == types.VK_RSHIFT ||
+					k.VKCode == types.VK_RMENU ||
+					k.VKCode == types.VK_LMENU) {
+				defaultLightning()
+			}
 		}
+
+		continue
 	}
 }

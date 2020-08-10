@@ -49,7 +49,7 @@ func (v LogiKeyboard) SetLightingForKeyWithKeyName(name LogiKeyboardTypes.Name, 
 }
 
 func (v LogiKeyboard) SetLightingForTargetZone(deviceType LogiKeyboardTypes.DeviceType, zoneId int, red int, green int, blue int) {
-	_, _, _ = v.ledSetLightingForKeyWithKeyName.Call(uintptr(deviceType), uintptr(zoneId), uintptr(red), uintptr(green), uintptr(blue))
+	_, _, _ = v.ledSetLightingForTargetZone.Call(uintptr(deviceType), uintptr(zoneId), uintptr(red), uintptr(green), uintptr(blue))
 }
 
 func (v LogiKeyboard) Shutdown() {
