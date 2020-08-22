@@ -46,7 +46,8 @@ const (
 	E                       = 0x12
 	R                       = 0x13
 	T                       = 0x14
-	Y                       = 0x15
+	//Y                       = 0x15
+	Z                       = 0x15
 	U                       = 0x16
 	I                       = 0x17
 	O                       = 0x18
@@ -78,7 +79,8 @@ const (
 	NUM_FIVE                = 0x4C
 	NUM_SIX                 = 0x4D
 	LEFT_SHIFT              = 0x2A
-	Z                       = 0x2C
+	//Z                       = 0x2C
+	Y                       = 0x2C
 	X                       = 0x2D
 	C                       = 0x2E
 	V                       = 0x2F

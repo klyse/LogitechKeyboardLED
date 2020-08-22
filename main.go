@@ -42,18 +42,34 @@ func main() {
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.X, 100, 0, 0),
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.Y, 100, 0, 0),
 
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.Z, 100, 0, 0),
+
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F, 0, 100, 0),
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.R, 100, 100, 0),
+		}),
+
+		*new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LCONTROL, types.VK_LSHIFT, types.VK_LMENU}, []ShortcutKey{
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.T, 50, 0, 50),
 		}),
 
 		*new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LCONTROL, types.VK_LSHIFT}, []ShortcutKey{
-			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.T, 50, 0, 50),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.Z, 0, 100, 0),
 
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F, 0, 100, 0),
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.R, 100, 100, 0),
 		}),
 
-		*new(Shortcut).CreateColor([]types.VKCode{types.VK_LWIN}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.ONE, LogiKeyboardTypes.TWO, LogiKeyboardTypes.THREE, LogiKeyboardTypes.FOUR, LogiKeyboardTypes.FIVE, LogiKeyboardTypes.SIX, LogiKeyboardTypes.SEVEN, LogiKeyboardTypes.EIGHT, LogiKeyboardTypes.NINE, LogiKeyboardTypes.ZERO}, 0, 100, 0),
+		*new(Shortcut).CreateWithKey([]types.VKCode{types.VK_RMENU, types.VK_LCONTROL}, []ShortcutKey{
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.SEVEN, 50, 50, 100),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.ZERO, 50, 50, 100),
+
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.EIGHT, 50, 100, 0),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.NINE, 50, 100, 0),
+
+			*new(ShortcutKey).CreateColor(0x66, 50, 100, 0),
+		}),
+
+		*new(Shortcut).CreateColor([]types.VKCode{types.VK_LWIN}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.TAB, LogiKeyboardTypes.ONE, LogiKeyboardTypes.TWO, LogiKeyboardTypes.THREE, LogiKeyboardTypes.FOUR, LogiKeyboardTypes.FIVE, LogiKeyboardTypes.SIX, LogiKeyboardTypes.SEVEN, LogiKeyboardTypes.EIGHT, LogiKeyboardTypes.NINE, LogiKeyboardTypes.ZERO}, 0, 100, 0),
 		*new(Shortcut).Create([]types.VKCode{types.VK_LMENU}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.F4}),
 	}
 
@@ -65,6 +81,12 @@ func main() {
 func defaultLightning() {
 	fmt.Println("defaultLighting")
 	logiKeyboard.SetLightning(100, 100, 100)
+
+	logiKeyboard.SetLightingForKeyWithKeyName(LogiKeyboardTypes.LEFT_CONTROL, 100, 0, 0)
+	logiKeyboard.SetLightingForKeyWithKeyName(LogiKeyboardTypes.LEFT_SHIFT, 100, 0, 0)
+	logiKeyboard.SetLightingForKeyWithKeyName(LogiKeyboardTypes.LEFT_ALT, 100, 0, 0)
+	logiKeyboard.SetLightingForKeyWithKeyName(LogiKeyboardTypes.RIGHT_ALT, 100, 0, 0)
+	logiKeyboard.SetLightingForKeyWithKeyName(LogiKeyboardTypes.RIGHT_CONTROL, 100, 0, 0)
 }
 
 func run(shortcuts []Shortcut) error {
