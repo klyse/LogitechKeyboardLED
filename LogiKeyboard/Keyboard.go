@@ -2,25 +2,25 @@ package LogiKeyboard
 
 import (
 	"github.com/klyse/LogitechKeyboardLED/LogiKeyboardTypes"
-	"syscall"
+	"golang.org/x/sys/windows"
 )
 
 type LogiKeyboard struct {
-	dll                             *syscall.LazyDLL
-	ledInit                         *syscall.LazyProc
-	ledSetTargetDevice              *syscall.LazyProc
-	ledSetLighting                  *syscall.LazyProc
-	ledSetLightingForKeyWithKeyName *syscall.LazyProc
-	ledSetLightingForTargetZone     *syscall.LazyProc
+	dll                             *windows.LazyDLL
+	ledInit                         *windows.LazyProc
+	ledSetTargetDevice              *windows.LazyProc
+	ledSetLighting                  *windows.LazyProc
+	ledSetLightingForKeyWithKeyName *windows.LazyProc
+	ledSetLightingForTargetZone     *windows.LazyProc
 
-	ledShutdown *syscall.LazyProc
+	ledShutdown *windows.LazyProc
 }
 
 func Create() *LogiKeyboard {
 	p := new(LogiKeyboard)
 
 	//https://github.com/golang/go/wiki/WindowsDLLs
-	p.dll = syscall.NewLazyDLL("LogitechLedEnginesWrapper.dll")
+	p.dll = windows.NewLazyDLL("LogitechLedEnginesWrapper.dll")
 	p.ledInit = p.dll.NewProc("LogiLedInit")
 	p.ledSetTargetDevice = p.dll.NewProc("LogiLedSetTargetDevice")
 	p.ledSetLighting = p.dll.NewProc("LogiLedSetLighting")
