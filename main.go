@@ -1,8 +1,8 @@
 package main
 
-import "C"
 import (
 	"fmt"
+	"github.com/ahmetb/go-linq/v3"
 	"github.com/klyse/LogitechKeyboardLED/LogiKeyboard"
 	"github.com/klyse/LogitechKeyboardLED/LogiKeyboardTypes"
 	"github.com/moutend/go-hook/pkg/keyboard"
@@ -29,12 +29,41 @@ func main() {
 	defaultLightning()
 
 	var shortcuts = []*Shortcut{
+		new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LSHIFT}, []ShortcutKey{
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F6, 100, 0, 0),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F9, 0, 0, 100),
+		}),
+
+		new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LCONTROL}, []ShortcutKey{
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F2, 100, 0, 0),
+
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.C, 100, 0, 100),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.V, 100, 0, 100),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.X, 100, 0, 0),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.Y, 100, 0, 0),
+
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F, 0, 100, 0),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.R, 100, 100, 0),
+		}),
+
+		new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LCONTROL, types.VK_LSHIFT}, []ShortcutKey{
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.T, 50, 0, 50),
+			
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F, 0, 100, 0),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.R, 100, 100, 0),
+		}),
+
 		new(Shortcut).Create([]types.VKCode{types.VK_LCONTROL, types.VK_LSHIFT}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.T, LogiKeyboardTypes.R}),
+
 		new(Shortcut).CreateColor([]types.VKCode{types.VK_LWIN}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.ONE, LogiKeyboardTypes.TWO, LogiKeyboardTypes.THREE, LogiKeyboardTypes.FOUR, LogiKeyboardTypes.FIVE, LogiKeyboardTypes.SIX, LogiKeyboardTypes.SEVEN, LogiKeyboardTypes.EIGHT, LogiKeyboardTypes.NINE, LogiKeyboardTypes.ZERO}, 0, 100, 0),
 		new(Shortcut).Create([]types.VKCode{types.VK_LCONTROL}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.C, LogiKeyboardTypes.Z, LogiKeyboardTypes.Y}),
 		new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LSHIFT}, []ShortcutKey{
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F6, 0, 100, 0),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F9, 0, 100, 0),
 		}),
+		new(Shortcut).Create([]types.VKCode{types.VK_LMENU}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.F4}),
+		new(Shortcut).Create([]types.VKCode{types.VK_RMENU}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.SEVEN, LogiKeyboardTypes.EIGHT, LogiKeyboardTypes.NINE, LogiKeyboardTypes.ZERO}),
+		new(Shortcut).Create([]types.VKCode{types.VK_R, types.VK_LCONTROL}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.R}),
 	}
 
 	if err := run(shortcuts); err != nil {
@@ -62,7 +91,7 @@ func run(shortcuts []*Shortcut) error {
 
 	fmt.Println("start capturing keyboard input")
 
-	keyMap := make(map[types.VKCode]bool)
+	currentlyPressedKeys := make(map[types.VKCode]bool)
 
 	for {
 		select {
@@ -75,28 +104,33 @@ func run(shortcuts []*Shortcut) error {
 		case k := <-keyboardChan:
 			fmt.Printf("Received %v %v\n", k.Message, k.VKCode)
 
-			keyMap[k.VKCode] = k.Message == types.WM_KEYDOWN
+			currentlyPressedKeys[k.VKCode] = k.Message == types.WM_KEYDOWN || k.Message == types.WM_SYSKEYDOWN
 
-			found := false
-			for _, shortcut := range shortcuts {
-				found = true
-				for _, key := range shortcut.modifiers {
-					if !keyMap[key] {
-						found = false
-						break
-					}
+			shortCut := linq.From(shortcuts).Where(func(c interface{}) bool {
+				found := linq.From(c.(*Shortcut).modifiers).All(func(y interface{}) bool {
+					return currentlyPressedKeys[y.(types.VKCode)]
+				})
+
+				if !found {
+					return false
 				}
 
-				if found {
-					defaultLightning()
-					for _, logiKey := range shortcut.keys {
-						logiKeyboard.SetLightingForKeyWithKeyName(logiKey.key, logiKey.red, logiKey.green, logiKey.blue)
-					}
-					break
-				}
-			}
+				found = linq.From(currentlyPressedKeys).Where(func(y interface{}) bool {
+					return y.(linq.KeyValue).Value.(bool)
+				}).AnyWith(func(y interface{}) bool {
+					return !linq.From(c.(*Shortcut).modifiers).Contains(y.(linq.KeyValue).Key.(types.VKCode))
+				})
 
-			if !found {
+				return !found
+			}).First()
+
+			if shortCut != nil {
+				defaultLightning()
+				for _, logiKey := range shortCut.(*Shortcut).keys {
+					logiKeyboard.SetLightingForKeyWithKeyName(logiKey.key, logiKey.red, logiKey.green, logiKey.blue)
+
+				}
+			} else {
 				defaultLightning()
 			}
 		}

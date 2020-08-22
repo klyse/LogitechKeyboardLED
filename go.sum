@@ -1,2 +1,4 @@
+github.com/ahmetb/go-linq/v3 v3.1.0 h1:E/eoLrVELxU42gINTWgbj+jK2Z+wXJqt0wsk1NTu4h8=
+github.com/ahmetb/go-linq/v3 v3.1.0/go.mod h1:haQ3JfOeWK8HpVxMtHHEMPVgBKiYyQ+f1/kLZh/cj9U=
 github.com/moutend/go-hook v0.1.0 h1:8jGA7zxtcNmiFrHf+KAGpSBbU99fyY9DS1s38MOBJQU=
 github.com/moutend/go-hook v0.1.0/go.mod h1:rGHmQESfHpsztJ6jbDoaiCgesGdZttObFlY/ksHIlY4=
