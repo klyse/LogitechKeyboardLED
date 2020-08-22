@@ -30,7 +30,7 @@ func main() {
 
 	var shortcuts = []*Shortcut{
 		new(Shortcut).Create([]types.VKCode{types.VK_LCONTROL, types.VK_LSHIFT}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.T, LogiKeyboardTypes.R}),
-		new(Shortcut).Create([]types.VKCode{types.VK_LWIN}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.ONE, LogiKeyboardTypes.TWO, LogiKeyboardTypes.THREE}),
+		new(Shortcut).CreateColor([]types.VKCode{types.VK_LWIN}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.ONE, LogiKeyboardTypes.TWO, LogiKeyboardTypes.THREE, LogiKeyboardTypes.FOUR, LogiKeyboardTypes.FIVE, LogiKeyboardTypes.SIX, LogiKeyboardTypes.SEVEN, LogiKeyboardTypes.EIGHT, LogiKeyboardTypes.NINE, LogiKeyboardTypes.ZERO}, 0, 100, 0),
 		new(Shortcut).Create([]types.VKCode{types.VK_LCONTROL}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.C, LogiKeyboardTypes.Z, LogiKeyboardTypes.Y}),
 		new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LSHIFT}, []ShortcutKey{
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F6, 0, 100, 0),
