@@ -32,7 +32,9 @@ func main() {
 		new(Shortcut).Create([]types.VKCode{types.VK_LCONTROL, types.VK_LSHIFT}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.T, LogiKeyboardTypes.R}),
 		new(Shortcut).Create([]types.VKCode{types.VK_LWIN}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.ONE, LogiKeyboardTypes.TWO, LogiKeyboardTypes.THREE}),
 		new(Shortcut).Create([]types.VKCode{types.VK_LCONTROL}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.C, LogiKeyboardTypes.Z, LogiKeyboardTypes.Y}),
-		new(Shortcut).Create([]types.VKCode{types.VK_LSHIFT}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.F6}),
+		new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LSHIFT}, []ShortcutKey{
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F6, 0, 100, 0),
+		}),
 	}
 
 	if err := run(shortcuts); err != nil {
@@ -41,7 +43,7 @@ func main() {
 }
 
 func defaultLightning() {
-	fmt.Print("defaultLighting")
+	fmt.Println("defaultLighting")
 	logiKeyboard.SetLightning(100, 100, 100)
 }
 
@@ -74,10 +76,10 @@ func run(shortcuts []*Shortcut) error {
 			fmt.Printf("Received %v %v\n", k.Message, k.VKCode)
 
 			keyMap[k.VKCode] = k.Message == types.WM_KEYDOWN
-			fmt.Printf("Value of ctrl %v\n", keyMap[types.VK_LCONTROL])
 
+			found := false
 			for _, shortcut := range shortcuts {
-				found := true
+				found = true
 				for _, key := range shortcut.modifiers {
 					if !keyMap[key] {
 						found = false
@@ -88,21 +90,13 @@ func run(shortcuts []*Shortcut) error {
 				if found {
 					defaultLightning()
 					for _, logiKey := range shortcut.keys {
-						logiKeyboard.SetLightingForKeyWithKeyName(logiKey, 100, 0, 0)
+						logiKeyboard.SetLightingForKeyWithKeyName(logiKey.key, logiKey.red, logiKey.green, logiKey.blue)
 					}
 					break
 				}
 			}
 
-			if k.Message == types.WM_KEYUP &&
-				(k.VKCode == types.VK_LWIN ||
-					k.VKCode == types.VK_RWIN ||
-					k.VKCode == types.VK_RCONTROL ||
-					k.VKCode == types.VK_LCONTROL ||
-					k.VKCode == types.VK_LSHIFT ||
-					k.VKCode == types.VK_RSHIFT ||
-					k.VKCode == types.VK_RMENU ||
-					k.VKCode == types.VK_LMENU) {
+			if !found {
 				defaultLightning()
 			}
 		}
