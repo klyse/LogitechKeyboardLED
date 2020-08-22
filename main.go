@@ -98,7 +98,7 @@ func run(shortcuts []Shortcut) error {
 			currentlyPressedKeys[k.VKCode] = k.Message == types.WM_KEYDOWN || k.Message == types.WM_SYSKEYDOWN
 
 			shortCut := linq.From(shortcuts).Where(func(c interface{}) bool {
-				found := linq.From(c.(Shortcut).modifiers).All(func(y interface{}) bool {
+				found := linq.From(c.(Shortcut).Modifiers).All(func(y interface{}) bool {
 					return currentlyPressedKeys[y.(types.VKCode)]
 				})
 
@@ -109,7 +109,7 @@ func run(shortcuts []Shortcut) error {
 				found = linq.From(currentlyPressedKeys).Where(func(y interface{}) bool {
 					return y.(linq.KeyValue).Value.(bool)
 				}).AnyWith(func(y interface{}) bool {
-					return !linq.From(c.(Shortcut).modifiers).Contains(y.(linq.KeyValue).Key.(types.VKCode))
+					return !linq.From(c.(Shortcut).Modifiers).Contains(y.(linq.KeyValue).Key.(types.VKCode))
 				})
 
 				return !found
@@ -117,8 +117,8 @@ func run(shortcuts []Shortcut) error {
 
 			if shortCut != nil {
 				defaultLightning()
-				for _, logiKey := range shortCut.(Shortcut).keys {
-					logiKeyboard.SetLightingForKeyWithKeyName(logiKey.key, logiKey.red, logiKey.green, logiKey.blue)
+				for _, logiKey := range shortCut.(Shortcut).Keys {
+					logiKeyboard.SetLightingForKeyWithKeyName(logiKey.Key, logiKey.Red, logiKey.Green, logiKey.Blue)
 
 				}
 			} else {
