@@ -65,6 +65,7 @@ func main() {
 
 		*new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LCONTROL, types.VK_LMENU}, []ShortcutKey{
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.B, 0, 100, 0),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.L, 0, 100, 0),
 		}),
 
 		*new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LCONTROL, types.VK_LSHIFT}, []ShortcutKey{
