@@ -26,7 +26,7 @@ func main() {
 	logiKeyboard.Init()
 
 	logiKeyboard.SetTargetDevice(LogiKeyboardTypes.LogiDeviceTypeAll)
-	defaultLightning()
+	defaultLightning(false)
 
 	var shortcuts = []Shortcut{
 		*new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LSHIFT}, []ShortcutKey{
@@ -46,14 +46,30 @@ func main() {
 
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F, 0, 100, 0),
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.R, 100, 100, 0),
+
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.B, 0, 100, 0),
+
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.NUM_SLASH, 100, 0, 100),
+
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.HOME, 0, 100, 0),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.END, 0, 100, 0),
+
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.W, 50, 0, 100),
+
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F4, 100, 100, 0),
 		}),
 
 		*new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LCONTROL, types.VK_LSHIFT, types.VK_LMENU}, []ShortcutKey{
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.T, 50, 0, 50),
 		}),
 
+		*new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LCONTROL, types.VK_LMENU}, []ShortcutKey{
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.B, 0, 100, 0),
+		}),
+
 		*new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LCONTROL, types.VK_LSHIFT}, []ShortcutKey{
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.Z, 0, 100, 0),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.B, 0, 100, 0),
 
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F, 0, 100, 0),
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.R, 100, 100, 0),
@@ -70,7 +86,12 @@ func main() {
 		}),
 
 		*new(Shortcut).CreateColor([]types.VKCode{types.VK_LWIN}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.TAB, LogiKeyboardTypes.ONE, LogiKeyboardTypes.TWO, LogiKeyboardTypes.THREE, LogiKeyboardTypes.FOUR, LogiKeyboardTypes.FIVE, LogiKeyboardTypes.SIX, LogiKeyboardTypes.SEVEN, LogiKeyboardTypes.EIGHT, LogiKeyboardTypes.NINE, LogiKeyboardTypes.ZERO}, 0, 100, 0),
-		*new(Shortcut).Create([]types.VKCode{types.VK_LMENU}, []LogiKeyboardTypes.Name{LogiKeyboardTypes.F4}),
+
+		*new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LMENU}, []ShortcutKey{
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F4, 50, 50, 100),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.ONE, 0, 100, 0),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.FIVE, 0, 0, 100),
+		}),
 	}
 
 	if err := run(shortcuts); err != nil {
@@ -78,8 +99,8 @@ func main() {
 	}
 }
 
-func defaultLightning() {
-	fmt.Println("defaultLighting")
+func defaultLightning(preHotkey bool) {
+	fmt.Printf("defaultLighting %v\n", preHotkey)
 	logiKeyboard.SetLightning(100, 100, 100)
 
 	logiKeyboard.SetLightingForKeyWithKeyName(LogiKeyboardTypes.LEFT_CONTROL, 100, 0, 0)
@@ -87,6 +108,11 @@ func defaultLightning() {
 	logiKeyboard.SetLightingForKeyWithKeyName(LogiKeyboardTypes.LEFT_ALT, 100, 0, 0)
 	logiKeyboard.SetLightingForKeyWithKeyName(LogiKeyboardTypes.RIGHT_ALT, 100, 0, 0)
 	logiKeyboard.SetLightingForKeyWithKeyName(LogiKeyboardTypes.RIGHT_CONTROL, 100, 0, 0)
+
+	if !preHotkey {
+		logiKeyboard.SetLightingForKeyWithKeyName(LogiKeyboardTypes.F9, 0, 0, 100)
+		logiKeyboard.SetLightingForKeyWithKeyName(LogiKeyboardTypes.ESC, 0, 100, 0)
+	}
 }
 
 func run(shortcuts []Shortcut) error {
@@ -138,13 +164,12 @@ func run(shortcuts []Shortcut) error {
 			}).First()
 
 			if shortCut != nil {
-				defaultLightning()
+				defaultLightning(true)
 				for _, logiKey := range shortCut.(Shortcut).Keys {
 					logiKeyboard.SetLightingForKeyWithKeyName(logiKey.Key, logiKey.Red, logiKey.Green, logiKey.Blue)
-
 				}
 			} else {
-				defaultLightning()
+				defaultLightning(false)
 			}
 		}
 
