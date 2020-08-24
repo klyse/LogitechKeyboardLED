@@ -36,7 +36,7 @@ func main() {
 		}),
 
 		Shortcuts.CreateWithKey([]types.VKCode{types.VK_LCONTROL}, []Shortcuts.ShortcutKey{
-			Shortcuts.CreateKeyColor(LogiKeyboardTypes.F2, 100, 0, 0),
+			Shortcuts.CreateKeyColorEffect(LogiKeyboardTypes.F2, 100, 0, 0, Shortcuts.Blinking),
 
 			Shortcuts.CreateKeyColor(LogiKeyboardTypes.C, 100, 0, 100),
 			Shortcuts.CreateKeyColor(LogiKeyboardTypes.V, 100, 0, 100),
