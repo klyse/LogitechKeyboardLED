@@ -12,6 +12,7 @@ type LogiKeyboard struct {
 	ledSetLighting                  *windows.LazyProc
 	ledSetLightingForKeyWithKeyName *windows.LazyProc
 	ledSetLightingForTargetZone     *windows.LazyProc
+	ledFlashSingleKey               *windows.LazyProc
 
 	ledShutdown *windows.LazyProc
 }
@@ -26,6 +27,7 @@ func Create() *LogiKeyboard {
 	p.ledSetLighting = p.dll.NewProc("LogiLedSetLighting")
 	p.ledSetLightingForKeyWithKeyName = p.dll.NewProc("LogiLedSetLightingForKeyWithKeyName")
 	p.ledSetLightingForTargetZone = p.dll.NewProc("LogiLedSetLightingForTargetZone")
+	p.ledFlashSingleKey = p.dll.NewProc("LogiLedSetLightingForKeyWithKeyName")
 
 	p.ledShutdown = p.dll.NewProc("LogiLedShutdown")
 
@@ -50,6 +52,10 @@ func (v LogiKeyboard) SetLightingForKeyWithKeyName(name LogiKeyboardTypes.Name, 
 
 func (v LogiKeyboard) SetLightingForTargetZone(deviceType LogiKeyboardTypes.DeviceType, zoneId int, red int, green int, blue int) {
 	_, _, _ = v.ledSetLightingForTargetZone.Call(uintptr(deviceType), uintptr(zoneId), uintptr(red), uintptr(green), uintptr(blue))
+}
+
+func (v LogiKeyboard) SetFlashSingleKey(name LogiKeyboardTypes.Name, red, green, blue, msDuration, msInterval int) {
+	_, _, _ = v.ledFlashSingleKey.Call(uintptr(name), uintptr(red), uintptr(green), uintptr(blue), uintptr(msDuration), uintptr(msInterval))
 }
 
 func (v LogiKeyboard) Shutdown() {

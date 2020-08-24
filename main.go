@@ -144,7 +144,12 @@ func run(shortcuts []Shortcut) error {
 		case k := <-keyboardChan:
 			fmt.Printf("Received %v %v\n", k.Message, k.VKCode)
 
+			var prevState = currentlyPressedKeys[k.VKCode]
 			currentlyPressedKeys[k.VKCode] = k.Message == types.WM_KEYDOWN || k.Message == types.WM_SYSKEYDOWN
+
+			if prevState == currentlyPressedKeys[k.VKCode] {
+				continue
+			}
 
 			shortCut := linq.From(shortcuts).Where(func(c interface{}) bool {
 				found := linq.From(c.(Shortcut).Modifiers).All(func(y interface{}) bool {
