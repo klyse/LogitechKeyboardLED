@@ -31,7 +31,7 @@ func main() {
 
 	var shortcuts = []Shortcuts.Shortcut{
 		Shortcuts.CreateWithKey([]types.VKCode{types.VK_LSHIFT}, []Shortcuts.ShortcutKey{
-			Shortcuts.CreateKeyColor(LogiKeyboardTypes.F6, 100, 0, 0),
+			Shortcuts.CreateKeyColorEffect(LogiKeyboardTypes.F6, 100, 0, 0, Shortcuts.Blinking),
 			Shortcuts.CreateKeyColor(LogiKeyboardTypes.F9, 0, 0, 100),
 		}),
 
@@ -62,7 +62,7 @@ func main() {
 		}),
 
 		Shortcuts.CreateWithKey([]types.VKCode{types.VK_LCONTROL, types.VK_LSHIFT, types.VK_LMENU}, []Shortcuts.ShortcutKey{
-			Shortcuts.CreateKeyColor(LogiKeyboardTypes.T, 50, 0, 50),
+			Shortcuts.CreateKeyColor(LogiKeyboardTypes.T, 100, 0, 0),
 		}),
 
 		Shortcuts.CreateWithKey([]types.VKCode{types.VK_LCONTROL, types.VK_LMENU}, []Shortcuts.ShortcutKey{
@@ -88,7 +88,7 @@ func main() {
 
 		Shortcuts.CreateWithKey([]types.VKCode{types.VK_LMENU}, []Shortcuts.ShortcutKey{
 			Shortcuts.CreateKeyColor(LogiKeyboardTypes.F4, 50, 50, 100),
-			Shortcuts.CreateKeyColor(LogiKeyboardTypes.ONE, 0, 100, 0),
+			Shortcuts.CreateKeyColorEffect(LogiKeyboardTypes.ONE, 0, 100, 0, Shortcuts.Blinking),
 			Shortcuts.CreateKeyColor(LogiKeyboardTypes.FIVE, 0, 0, 100),
 		}),
 	}
