@@ -84,9 +84,6 @@ func main() {
 
 			Shortcuts.CreateKeyColor(LogiKeyboardTypes.EIGHT, 50, 100, 0),
 			Shortcuts.CreateKeyColor(LogiKeyboardTypes.NINE, 50, 100, 0),
-
-			// todo: check what this is
-			Shortcuts.CreateKeyColor(0x66, 50, 100, 0),
 		}),
 
 		Shortcuts.CreateWithKey([]types.VKCode{types.VK_LMENU}, []Shortcuts.ShortcutKey{
@@ -115,9 +112,6 @@ func defaultLightning(preHotkey bool) {
 	if !preHotkey {
 		logiKeyboard.SetLightingForKeyWithKeyName(LogiKeyboardTypes.F9, 0, 0, 100)
 		logiKeyboard.SetLightingForKeyWithKeyName(LogiKeyboardTypes.ESC, 0, 100, 0)
-
-		//logiKeyboard.SetFlashSingleKey(LogiKeyboardTypes.F, 0, 100, 0, 0, 500)
-		//logiKeyboard.SetPulseSingleKey(LogiKeyboardTypes.F, 0, 0, 0, 100, 100, 100, 500, 1)
 	}
 }
 
