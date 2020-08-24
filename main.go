@@ -57,6 +57,7 @@ func main() {
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.W, 50, 0, 100),
 
 			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F4, 100, 100, 0),
+			*new(ShortcutKey).CreateColor(LogiKeyboardTypes.F8, 0, 0, 100),
 		}),
 
 		*new(Shortcut).CreateWithKey([]types.VKCode{types.VK_LCONTROL, types.VK_LSHIFT, types.VK_LMENU}, []ShortcutKey{
@@ -133,6 +134,22 @@ func run(shortcuts []Shortcut) error {
 
 	currentlyPressedKeys := make(map[types.VKCode]bool)
 
+	// get all relevant keys (modifiers)
+	var relevantKeys []types.VKCode
+	linq.From(shortcuts).
+		SelectManyT(func(c Shortcut) linq.Query {
+			return linq.From(c.Modifiers)
+		}).
+		GroupByT(func(modifier types.VKCode) types.VKCode {
+			return modifier
+		}, func(modifier types.VKCode) types.VKCode {
+			return modifier
+		}).
+		SelectT(func(c linq.Group) types.VKCode {
+			return c.Key.(types.VKCode)
+		}).
+		ToSlice(&relevantKeys)
+
 	for {
 		select {
 		case <-time.After(5 * time.Minute):
@@ -142,32 +159,45 @@ func run(shortcuts []Shortcut) error {
 			fmt.Println("Received shutdown signal")
 			return nil
 		case k := <-keyboardChan:
-			fmt.Printf("Received %v %v\n", k.Message, k.VKCode)
-
 			var prevState = currentlyPressedKeys[k.VKCode]
 			currentlyPressedKeys[k.VKCode] = k.Message == types.WM_KEYDOWN || k.Message == types.WM_SYSKEYDOWN
 
+			// if the key remained in the same state: ignore
 			if prevState == currentlyPressedKeys[k.VKCode] {
 				continue
 			}
 
-			shortCut := linq.From(shortcuts).Where(func(c interface{}) bool {
-				found := linq.From(c.(Shortcut).Modifiers).All(func(y interface{}) bool {
-					return currentlyPressedKeys[y.(types.VKCode)]
-				})
+			// if the key is no modifier: ignore
+			if !linq.From(relevantKeys).
+				Contains(k.VKCode) {
+				continue
+			}
 
-				if !found {
-					return false
-				}
+			fmt.Printf("Received %v %v\n", k.Message, k.VKCode)
 
-				found = linq.From(currentlyPressedKeys).Where(func(y interface{}) bool {
-					return y.(linq.KeyValue).Value.(bool)
-				}).AnyWith(func(y interface{}) bool {
-					return !linq.From(c.(Shortcut).Modifiers).Contains(y.(linq.KeyValue).Key.(types.VKCode))
-				})
+			shortCut := linq.From(shortcuts).
+				Where(func(c interface{}) bool {
+					found := linq.From(c.(Shortcut).Modifiers).
+						All(func(y interface{}) bool {
+							return currentlyPressedKeys[y.(types.VKCode)]
+						})
 
-				return !found
-			}).First()
+					if !found {
+						return false
+					}
+
+					found = linq.From(currentlyPressedKeys).
+						Where(func(y interface{}) bool {
+							return y.(linq.KeyValue).Value.(bool)
+						}).
+						AnyWith(func(y interface{}) bool {
+							return !linq.From(c.(Shortcut).Modifiers).
+								Contains(y.(linq.KeyValue).Key.(types.VKCode))
+						})
+
+					return !found
+				}).
+				First()
 
 			if shortCut != nil {
 				defaultLightning(true)
