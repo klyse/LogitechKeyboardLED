@@ -28,3 +28,6 @@ That's it✔️
 
 The file ``main.go`` has a list of predefined shortcuts. Feel free to add your shortcuts in your repo/fork. I'm always happy if you add more common shortcuts and send them to me via pull-request. :)
 
+# More info
+
+I wrote an article on dev.to: https://dev.to/klyse/my-g815-keyboard-is-on-steroids-31fl
