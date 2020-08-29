@@ -6,6 +6,8 @@ Here's a quick example (sorry for the bad quality, the keys are shining bright a
 
 ![](/Images/example.gif)
 
+![](/Images/example2.gif)
+
 ## How to install 💻
 
 1. Clone the repo
