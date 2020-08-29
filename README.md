@@ -30,4 +30,4 @@ The file ``main.go`` has a list of predefined shortcuts. Feel free to add your s
 
 # More info
 
-I wrote an article on dev.to: https://dev.to/klyse/my-g815-keyboard-is-on-steroids-31fl
+I wrote an article about this repo on [dev.to](https://dev.to/klyse/my-g815-keyboard-is-on-steroids-31fl) have a look :).
