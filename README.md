@@ -6,6 +6,8 @@ Here's a quick example (sorry for the bad quality, the keys are shining bright a
 
 ![](/Images/example.gif)
 
+Here's another one:
+
 ![](/Images/example2.gif)
 
 ## How to install 💻
